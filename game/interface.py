@@ -11,3 +11,14 @@ class FileReader(ABC):
     @abstractmethod
     def read(self) -> Iterable:
         pass
+
+
+class Stage(ABC):
+    """
+    Interface for processing stages in the ingestion pipeline. Implementations can define specific processing logic.
+    The process method should take an iterable of rows and return an iterable of processed rows.
+    """
+
+    @abstractmethod
+    def process(self, rows: Iterable[dict]) -> dict | None:
+        pass

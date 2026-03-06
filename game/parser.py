@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Iterable
 
 from .interface import FileReader
 
@@ -12,7 +12,7 @@ class IngestionParser:
     def __init__(self, reader: FileReader):
         self.reader = reader
 
-    def parse(self) -> Generator[dict, None, None]:
+    def parse(self) -> Iterable[dict]:
         for row in self.reader.read():
             dict_row = {}
             for item in row:

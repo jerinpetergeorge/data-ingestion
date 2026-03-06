@@ -1,0 +1,43 @@
+class GameBaseError(Exception):
+    def __init__(self, msg, *args, **kwargs):
+        self.msg = msg
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.msg})"
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class ReaderError(GameBaseError):
+    pass
+
+
+class FileReadError(ReaderError):
+    """
+    Raised when the input file cannot be opened or read.
+    """
+
+    pass
+
+
+class ProcessorError(GameBaseError):
+    pass
+
+
+class InvalidKeySpecError(ProcessorError):
+    """
+    Raised when a key spec string is malformed.
+    e.g. 'id:unknown_type' or 'badformat'
+    """
+
+    pass
+
+
+class InvalidRowError(ProcessorError):
+    """
+    Raised when a row violates a pipeline contract that should never happen.
+    e.g. Rule 3 is violated — a row is missing a guaranteed important key.
+    """
+
+    pass

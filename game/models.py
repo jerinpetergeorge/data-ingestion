@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from .errors import InvalidKeySpecError
+
 
 @dataclass(frozen=True)
 class Header:
@@ -9,6 +11,9 @@ class Header:
     def from_string(string: str) -> "Header":
         key_specs = [KeySpec.from_string(part) for part in string.split(",")]
         return Header(keys=key_specs)
+
+    def to_keys(self) -> list[str]:
+        return [key_spec.name for key_spec in self.keys]
 
 
 @dataclass(frozen=True)
@@ -26,8 +31,10 @@ class KeySpec:
         }
         parts = spec.strip().split(":")
         if len(parts) != 2:
-            raise ValueError(f"Invalid key spec '{spec}'. Expected format: name:type")
+            raise InvalidKeySpecError(
+                f"Invalid key spec '{spec}'. Expected format: name:type"
+            )
         name, type_str = parts
         if type_str not in _TYPE_MAP:
-            raise ValueError(f"Unsupported type '{type_str}' in spec '{spec}'")
+            raise InvalidKeySpecError(f"Unsupported type '{type_str}' in spec '{spec}'")
         return KeySpec(name=name, dtype=_TYPE_MAP[type_str])
