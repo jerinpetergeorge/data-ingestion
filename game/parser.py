@@ -5,8 +5,9 @@ from .interface import FileReader
 
 class IngestionParser:
     """
-    Parses the input data from the reader and yields dictionaries where keys are
-    derived from the header and values are the corresponding data from each row.
+    Parses the input data from the reader and yields dictionaries
+    where keys are derived from the header and values are the
+    corresponding data from each row.
     """
 
     def __init__(self, reader: FileReader):

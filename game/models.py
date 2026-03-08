@@ -36,5 +36,6 @@ class KeySpec:
             )
         name, type_str = parts
         if type_str not in _TYPE_MAP:
-            raise InvalidKeySpecError(f"Unsupported type '{type_str}' in spec '{spec}'")
+            msg = f"Unsupported type '{type_str}' in spec '{spec}'"
+            raise InvalidKeySpecError(msg)
         return KeySpec(name=name, dtype=_TYPE_MAP[type_str])

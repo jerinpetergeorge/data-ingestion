@@ -4,7 +4,8 @@ from .models import Header
 
 class TypeChecker(Stage):
     """
-    A stage that checks if the types of the values in the row match the expected types defined in the header.
+    A stage that checks if the types of the values in the row match the
+    expected types defined in the header.
     If a value does not match the expected type, it raises a ValueError.
     """
 
@@ -25,8 +26,9 @@ class RequiredKeysFilter(Stage):
     A stage that filters out rows that do not contain all required keys.
     """
 
-    def __init__(self, keys: list[str]):
-        self.keys = keys
+    def __init__(self, header: Header):
+        self.header = header
+        self.keys = header.to_keys()
 
     def process(self, row: dict) -> dict | None:
         try:
