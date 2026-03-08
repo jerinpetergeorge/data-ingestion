@@ -1,18 +1,15 @@
 from typing import Iterable
 
 from .interface import Stage
-from .models import Header
 
 
 class IngestionPipeline:
     def __init__(
         self,
         rows: Iterable,
-        header: Header,
         stages: list[Stage],
     ):
         self.rows = rows
-        self.header = header
         self.stages = stages
 
     def process(self) -> Iterable[dict]:
