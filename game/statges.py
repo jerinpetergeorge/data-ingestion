@@ -1,4 +1,3 @@
-from .errors import InvalidRowError
 from .interface import Stage
 from .models import Header
 
@@ -29,10 +28,8 @@ class RequiredKeysFilter(Stage):
     def __init__(self, keys: list[str]):
         self.keys = keys
 
-    def process(self, row: dict) -> dict:
+    def process(self, row: dict) -> dict | None:
         try:
             return {key: row[key] for key in self.keys}
         except KeyError:
-            raise InvalidRowError(
-                f"Row is missing required keys. Required: {self.keys}, Row: {row}"
-            )
+            return None

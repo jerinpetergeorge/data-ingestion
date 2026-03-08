@@ -32,12 +32,3 @@ class InvalidKeySpecError(ProcessorError):
     """
 
     pass
-
-
-class InvalidRowError(ProcessorError):
-    """
-    Raised when a row violates a pipeline contract that should never happen.
-    e.g. Rule 3 is violated — a row is missing a guaranteed important key.
-    """
-
-    pass

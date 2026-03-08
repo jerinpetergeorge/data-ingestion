@@ -1,3 +1,4 @@
+import csv
 from abc import ABC, abstractmethod
 from typing import Iterable
 
@@ -21,4 +22,15 @@ class Stage(ABC):
 
     @abstractmethod
     def process(self, rows: Iterable[dict]) -> dict | None:
+        pass
+
+
+class Writer(ABC):
+    """
+    Interface for writing processed data. Implementations can be written to various destinations
+    such as stdout, files, databases, etc.
+    """
+
+    @abstractmethod
+    def write(self, rows: Iterable[dict]) -> None:
         pass
