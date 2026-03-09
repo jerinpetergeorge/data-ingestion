@@ -1,17 +1,19 @@
 import csv
+import enum
 from os import PathLike
 from typing import Type
 
 from .errors import FileReadError, ReaderBackendNotSupportedError
 from .interface import FileReader
+from .mixins import EnumChoiceMixin
 
 
-def get_reader_backend_cls(backend_type: str = "local") -> Type[FileReader]:
+def get_reader_backend_cls(backend_type: str) -> Type[FileReader]:
     """
     Get the reader backend class based on the backend type.
     """
     try:
-        return READER_BACKENDS[backend_type]
+        return ReaderBackend[backend_type].value
     except KeyError:
         raise ReaderBackendNotSupportedError(
             f"Unsupported reader backend: {backend_type}",
@@ -51,9 +53,7 @@ class S3FileReader(URLFileReader):
 # ------------------------------------------ #
 # -------- Reader Backend Mappings --------- #
 # ------------------------------------------ #
-
-READER_BACKENDS = {
-    "local": LocalCSVLazyReader,
-    "https": URLFileReader,
-    "s3": S3FileReader,
-}
+class ReaderBackend(EnumChoiceMixin, enum.Enum):
+    LOCAL = LocalCSVLazyReader
+    URL = URLFileReader
+    S3 = S3FileReader

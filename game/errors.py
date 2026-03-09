@@ -62,3 +62,15 @@ class UnknownEntityTypeError(SorterError):
     """
 
     pass
+
+
+class WriterError(GameBaseError):
+    pass
+
+
+class WriterBackendNotSupportedError(WriterError):
+    """
+    Raised when the specified writer backend is not supported.
+    """
+
+    pass

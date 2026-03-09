@@ -1,7 +1,12 @@
 import pytest
 
-from game.errors import FileReadError
-from game.reader import LocalCSVLazyReader
+from game.errors import FileReadError, ReaderBackendNotSupportedError
+from game.reader import (
+    LocalCSVLazyReader,
+    S3FileReader,
+    URLFileReader,
+    get_reader_backend_cls,
+)
 
 
 class TestLocalCSVLazyReader:
@@ -103,3 +108,41 @@ class TestLocalCSVLazyReader:
             match="File not found: nonexistent.csv",
         ):
             list(reader.read())
+
+
+class TestGetReaderBackendCls:
+    @pytest.mark.parametrize(
+        "backend_type, expected_cls",
+        [
+            ("LOCAL", LocalCSVLazyReader),
+            ("S3", S3FileReader),
+            ("URL", URLFileReader),
+        ],
+    )
+    def test_returns_correct_reader_class(self, backend_type, expected_cls):
+        assert get_reader_backend_cls(backend_type) is expected_cls
+
+    @pytest.mark.parametrize(
+        "backend_type",
+        [
+            "invalid",
+            "",
+            "local",  # case-sensitive
+            "ftp",
+        ],
+    )
+    def test_raises_on_unsupported_backend(self, backend_type):
+        with pytest.raises(ReaderBackendNotSupportedError):
+            get_reader_backend_cls(backend_type)
+
+    def test_raises_with_correct_message(self):
+        with pytest.raises(
+            ReaderBackendNotSupportedError,
+            match="Unsupported reader backend: invalid",
+        ):
+            get_reader_backend_cls("invalid")
+
+    def test_returns_a_class_not_an_instance(self):
+        result = get_reader_backend_cls("LOCAL")
+
+        assert isinstance(result, type)

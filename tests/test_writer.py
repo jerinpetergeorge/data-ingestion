@@ -1,4 +1,7 @@
-from game.writer import StdOutWriter
+import pytest
+
+from game.errors import WriterBackendNotSupportedError
+from game.writer import CSVWriter, StdOutWriter, get_writer_backend_cls
 
 
 class TestStdOutWriter:
@@ -52,3 +55,40 @@ class TestStdOutWriter:
         result = writer.write([{"name": "levy"}])
 
         assert result is None
+
+
+class TestGetWriterBackendCls:
+    @pytest.mark.parametrize(
+        "backend_type, expected_cls",
+        [
+            ("STDOUT", StdOutWriter),
+            ("CSV", CSVWriter),
+        ],
+    )
+    def test_returns_correct_writer_class(self, backend_type, expected_cls):
+        assert get_writer_backend_cls(backend_type) is expected_cls
+
+    @pytest.mark.parametrize(
+        "backend_type",
+        [
+            "invalid",
+            "",
+            "stdout",
+            "file",
+        ],
+    )
+    def test_raises_on_unsupported_backend(self, backend_type):
+        with pytest.raises(WriterBackendNotSupportedError):
+            get_writer_backend_cls(backend_type)
+
+    def test_raises_with_correct_message(self):
+        with pytest.raises(
+            WriterBackendNotSupportedError,
+            match="Unsupported writer backend: invalid",
+        ):
+            get_writer_backend_cls("invalid")
+
+    def test_returns_a_class_not_an_instance(self):
+        result = get_writer_backend_cls("STDOUT")
+
+        assert isinstance(result, type)
