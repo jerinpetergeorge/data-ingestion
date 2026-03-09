@@ -1,5 +1,56 @@
 # The Ingestion Game
 
+## Installation
+
+### Pre-requisites
+- Python 3.10 or higher
+- virtualenv (optional but recommended)
+- [uv](https://docs.astral.sh/uv/) package manager
+
+### Steps
+1. Clone the repository: `git clone git@github.com:collate-hiring/jerinpetergeorge.git`
+2. cd into the project directory: `cd jerinpetergeorge`
+3. Create a virtual environment (using `uv` - see [doc](https://docs.astral.sh/uv/pip/environments/#creating-a-virtual-environment)): `uv venv` and activate it
+4. Install the package using uv: `uv pip install .`
+5. Run the CLI: `ingestion-game --help` to see the available options
+
+---
+
+## Usage
+
+```bash
+ingestion-game FILE_SOURCE -k "KEYS" -h "HIERARCHY"
+```
+
+| Argument | Short | Required | Default | Description |
+|---|---|---|---|---|
+| `FILE_SOURCE` | — | Yes | — | Path or URL to the input file |
+| `--keys` | `-k` | Yes | — | Key spec e.g. `id:int,name:str,type:str` |
+| `--hierarchy` | `-h` | Yes | — | Output hierarchy e.g. `A -> B -> C` |
+| `--reader-backend` | `-r` | No | `LOCAL` | One of `LOCAL`, `URL`, `S3` |
+| `--writer-backend` | `-w` | No | `STDOUT` | One of `STDOUT`, `CSV` |
+
+### Examples
+
+```bash
+# local file
+ingestion-game input.txt -k "id:int,name:str,type:str" -h "A -> B -> C"
+```
+
+**Note**: Currently, only `LOCAL` reader backend and `STDOUT` writer backend are implemented.
+
+---
+
+## Running Tests
+
+```bash
+uv run pytest --cov .
+```
+
+___
+___
+___
+
 The Ingestion Game consists of:
 1. A data file with a varying number of entries containing some data. It is shaped as a CSV where each row has
     an arbitrary number of `key=value` pairs separated by comma.
