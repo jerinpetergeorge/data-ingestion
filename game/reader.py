@@ -54,6 +54,11 @@ class S3FileReader(URLFileReader):
 # -------- Reader Backend Mappings --------- #
 # ------------------------------------------ #
 class ReaderBackend(EnumChoiceMixin, enum.Enum):
+    """
+    Enum for supported reader backends. The value of each member is
+    the corresponding reader class.
+    """
+
     LOCAL = LocalCSVLazyReader
     URL = URLFileReader
     S3 = S3FileReader

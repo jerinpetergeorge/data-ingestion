@@ -4,6 +4,12 @@ from .interface import Stage
 
 
 class IngestionPipeline:
+    """
+    Orchestrates the processing of rows through a sequence of stages.
+    Each stage can modify the row or filter it out by returning None.
+    The pipeline yields only the rows that successfully pass through all stages.
+    """
+
     def __init__(
         self,
         rows: Iterable,

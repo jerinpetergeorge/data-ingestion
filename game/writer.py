@@ -19,6 +19,10 @@ def get_writer_backend_cls(backend_type: str) -> type[Writer]:
 
 
 class StdOutWriter(Writer):
+    """
+    Write rows to standard output.
+    """
+
     def __init__(self, ordered_fields: list[str]):
         self.ordered_fields = ordered_fields
 
@@ -40,5 +44,10 @@ class CSVWriter(Writer):
 
 
 class WriterBackend(EnumChoiceMixin, enum.Enum):
+    """
+    Enum for supported writer backends. The value of each member is
+    the corresponding writer class.
+    """
+
     STDOUT = StdOutWriter
     CSV = CSVWriter

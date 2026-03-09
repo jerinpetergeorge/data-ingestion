@@ -36,6 +36,9 @@ class HierarchySorter:
         )
 
     def _validate_types(self, rows: list[dict]) -> None:
+        """
+        Validate that all rows have a type declared in the hierarchy.
+        """
         for row in rows:
             entity_type = row.get(self.TYPE_KEY)
             if entity_type not in self.hierarchy:

@@ -6,24 +6,48 @@ from .errors import InvalidHierarchyError, InvalidKeySpecError
 
 @dataclass(frozen=True)
 class Header:
+    """
+    Represents the expected keys and their types for a row.
+    For example, "id:int,name:str,score:float" → Header(keys=[
+        KeySpec(name="id", dtype=int),
+        KeySpec(name="name", dtype=str),
+        KeySpec(name="score", dtype=float),
+    ])
+    """
+
     keys: list["KeySpec"]
 
     @staticmethod
     def from_string(string: str) -> "Header":
+        """
+        Parses a header string like "id:int,name:str,score:float" into
+        a Header object.
+        """
         key_specs = [KeySpec.from_string(part) for part in string.split(",")]
         return Header(keys=key_specs)
 
     def to_keys(self) -> list[str]:
+        """
+        Returns just the key names in order. e.g. ["id", "name", "score"]
+        """
         return [key_spec.name for key_spec in self.keys]
 
 
 @dataclass(frozen=True)
 class KeySpec:
+    """
+    Represents the name and type of a key. For example, "id:int" →
+    KeySpec(name="id", dtype=int).
+    """
+
     name: str
     dtype: type
 
     @staticmethod
     def from_string(spec: str) -> "KeySpec":
+        """
+        Parses a key spec string like "id:int" into a KeySpec object.
+        """
         _TYPE_MAP: dict[str, type] = {
             "int": int,
             "str": str,
