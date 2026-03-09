@@ -9,7 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
-game = "game.cli:main"
+ingestion-game = "game.cli:main"
 
 [dependency-groups]
 dev = [
