@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from functools import cached_property
 
-from .errors import InvalidKeySpecError
+from .errors import InvalidHierarchyError, InvalidKeySpecError
 
 
 @dataclass(frozen=True)
@@ -39,3 +40,52 @@ class KeySpec:
             msg = f"Unsupported type '{type_str}' in spec '{spec}'"
             raise InvalidKeySpecError(msg)
         return KeySpec(name=name, dtype=_TYPE_MAP[type_str])
+
+
+@dataclass(frozen=True)
+class Hierarchy:
+    """
+    Represents the ordered chain of entity types.
+
+    e.g. "A -> B -> C" → order = ("A", "B", "C")
+    """
+
+    order: tuple[str, ...]
+
+    @staticmethod
+    def from_string(spec: str) -> "Hierarchy":
+        """
+        Parse "A -> B -> C" into Hierarchy(order=("A", "B", "C")).
+
+        Raises InvalidHierarchyError if the string is malformed or
+        contains cycles.
+        """
+        parts = [p.strip() for p in spec.split("->")]
+
+        if len(parts) < 2:
+            raise InvalidHierarchyError(
+                f"Hierarchy '{spec}' must have at least two types "
+                f"separated by '->'"
+            )
+
+        if any(p == "" for p in parts):
+            raise InvalidHierarchyError(
+                f"Hierarchy '{spec}' contains an empty type token."
+            )
+
+        if len(parts) != len(set(parts)):
+            raise InvalidHierarchyError(
+                f"Hierarchy '{spec}' contains a cycle or duplicate type."
+            )
+
+        return Hierarchy(order=tuple(parts))
+
+    @cached_property
+    def rank(self) -> dict[str, int]:
+        """
+        Returns a map of type → position. e.g. {'A': 0, 'B': 1, 'C': 2}
+        """
+        return {entity_type: idx for idx, entity_type in enumerate(self.order)}
+
+    def __contains__(self, entity_type: str) -> bool:
+        return entity_type in self.rank

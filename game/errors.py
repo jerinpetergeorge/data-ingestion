@@ -40,3 +40,25 @@ class InvalidKeySpecError(ProcessorError):
     """
 
     pass
+
+
+class SorterError(GameBaseError):
+    pass
+
+
+class InvalidHierarchyError(SorterError):
+    """
+    Raised when the hierarchy string is malformed or contains cycles.
+    e.g. 'A->B->A' or 'A' or 'A -> -> C'
+    """
+
+    pass
+
+
+class UnknownEntityTypeError(SorterError):
+    """
+    Raised when a row's type value is not declared in the hierarchy.
+    e.g. hierarchy is A->B->C but a row has type=D
+    """
+
+    pass

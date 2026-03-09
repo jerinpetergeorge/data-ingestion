@@ -1,7 +1,9 @@
+from dataclasses import FrozenInstanceError
+
 import pytest
 
-from game.errors import InvalidKeySpecError
-from game.models import Header, KeySpec
+from game.errors import InvalidHierarchyError, InvalidKeySpecError
+from game.models import Header, Hierarchy, KeySpec
 
 
 class TestHeader:
@@ -48,7 +50,7 @@ class TestHeader:
 
     def test_header_is_immutable(self):
         header = Header.from_string("id:int")
-        with pytest.raises(Exception):
+        with pytest.raises(FrozenInstanceError):
             header.keys = []
 
     def test_header_equality(self):
@@ -60,3 +62,63 @@ class TestHeader:
         header1 = Header.from_string("id:int")
         header2 = Header.from_string("name:str")
         assert header1 != header2
+
+
+class TestHierarchy:
+    def test_from_string_two_types(self):
+        hierarchy = Hierarchy.from_string("A -> B")
+
+        assert hierarchy.order == ("A", "B")
+
+    def test_from_string_three_types(self):
+        hierarchy = Hierarchy.from_string("A -> B -> C")
+
+        assert hierarchy.order == ("A", "B", "C")
+
+    def test_from_string_strips_whitespace(self):
+        hierarchy = Hierarchy.from_string("A->B->C")
+
+        assert hierarchy.order == ("A", "B", "C")
+
+    def test_rank_maps_type_to_position(self):
+        hierarchy = Hierarchy.from_string("A -> B -> C")
+
+        assert hierarchy.rank == {"A": 0, "B": 1, "C": 2}
+
+    def test_contains_known_type(self):
+        hierarchy = Hierarchy.from_string("A -> B -> C")
+
+        assert "A" in hierarchy
+        assert "B" in hierarchy
+        assert "C" in hierarchy
+
+    def test_does_not_contain_unknown_type(self):
+        hierarchy = Hierarchy.from_string("A -> B -> C")
+
+        assert "Z" not in hierarchy
+
+    def test_raises_on_single_type(self):
+        with pytest.raises(InvalidHierarchyError, match="at least two"):
+            Hierarchy.from_string("A")
+
+    def test_raises_on_empty_string(self):
+        with pytest.raises(InvalidHierarchyError):
+            Hierarchy.from_string("")
+
+    def test_raises_on_empty_token(self):
+        with pytest.raises(InvalidHierarchyError, match="empty type token"):
+            Hierarchy.from_string("A -> -> C")
+
+    def test_raises_on_duplicate_types(self):
+        with pytest.raises(InvalidHierarchyError, match="cycle or duplicate"):
+            Hierarchy.from_string("A -> B -> A")
+
+    def test_raises_on_cycle(self):
+        with pytest.raises(InvalidHierarchyError, match="cycle or duplicate"):
+            Hierarchy.from_string("A -> B -> C -> A")
+
+    def test_is_immutable(self):
+        hierarchy = Hierarchy.from_string("A -> B")
+
+        with pytest.raises(Exception):
+            hierarchy.order = ("X", "Y")
