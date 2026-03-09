@@ -13,6 +13,14 @@ class ReaderError(GameBaseError):
     pass
 
 
+class ReaderBackendNotSupportedError(ReaderError):
+    """
+    Raised when the specified reader backend is not supported.
+    """
+
+    pass
+
+
 class FileReadError(ReaderError):
     """
     Raised when the input file cannot be opened or read.
