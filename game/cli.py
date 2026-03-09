@@ -56,19 +56,33 @@ def main(
     Read a key=value CSV file and output filtered, typed rows, sorted by a
     specified hierarchy.
     """
+    # Initialize various components based on the CLI args
     reader = get_reader_backend_cls(reader_backend)(file_source)
-    header = Header.from_string(header_string)
     hierarchy = Hierarchy.from_string(hierarchy_string)
+    sorter = HierarchySorter(hierarchy)
+    header = Header.from_string(header_string)
+    writer = get_writer_backend_cls(writer_backend)(header.to_keys())
+
+    # Parse the  data into rows of dict
+    parsed_rows = IngestionParser(reader).parse()
+
+    # Create a processing pipeline with the required stages and run it
+    # on the parsed rows
     pipeline = IngestionPipeline(
-        rows=IngestionParser(reader).parse(),
+        rows=parsed_rows,
         stages=[
             RequiredKeysFilter(header),
             TypeChecker(header),
         ],
     )
-    sorter = HierarchySorter(hierarchy)
-    writer = get_writer_backend_cls(writer_backend)(header.to_keys())
-    writer.write(rows=sorter.sort(pipeline.process()))
+    processed_rows = pipeline.process()
+
+    # Sort the processed rows according to the specified
+    # hierarchy and write the output
+    sorted_rows = sorter.sort(processed_rows)
+
+    # Finally, write the sorted rows using the specified writer backend
+    writer.write(rows=sorter.sort(sorted_rows))
 
 
 if __name__ == "__main__":
