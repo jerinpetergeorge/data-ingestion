@@ -82,7 +82,7 @@ def main(
     sorted_rows = sorter.sort(processed_rows)
 
     # Finally, write the sorted rows using the specified writer backend
-    writer.write(rows=sorter.sort(sorted_rows))
+    writer.write(rows=sorted_rows)
 
 
 if __name__ == "__main__":
