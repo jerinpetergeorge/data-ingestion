@@ -53,7 +53,7 @@ ___
 1. [Presentation - Google Slides](https://docs.google.com/presentation/d/126KfGYydqD6XTD8PcXwFVmsL3gjwl6i-GiUkVT3k0KA/edit?usp=sharing)
 2. [Presentation - PDF](docs/System%20Design%20-%20Ingestion%20Game%20SaaS.pdf)
 3. [High-level architecture diagram - Image](docs/IG-SD-02.png)
-4. [High-level architecture diagram - Excalidraw File](docs/IG-SD-02.png)
+4. [High-level architecture diagram - Excalidraw File](docs/IG-SD-01.excalidraw)
 ___
 ___
 ___
